@@ -9,16 +9,6 @@ create table organizador(
     constraint id_pk primary key(id)
 );
 
-create table sala(
-	id int auto_increment,
-    id_evento int,
-    numero int,
-    andar int,
-    capacidade_maxima int,
-    constraint id_sala_pk primary key(id),
-    constraint fk_evento foreign key(id_evento) references evento(id)
-);
-
 create table evento(
     id int auto_increment,
     nome varchar(100),
@@ -30,6 +20,16 @@ create table evento(
     constraint organizador_FK foreign key(id_organizador) references organizador(id)
 );
 
+create table sala(
+	id int auto_increment,
+    id_evento int,
+    numero int,
+    andar int,
+    capacidade_maxima int,
+    constraint id_sala_pk primary key(id),
+    constraint fk_evento foreign key(id_evento) references evento(id)
+);
+
 create table conta(
     id int auto_increment,
     nome varchar(60) unique,
@@ -38,7 +38,7 @@ create table conta(
     data_nascimento date,
     idade int,
     nome_cartao varchar(60),
-    numero_cartao int(16),
+    numero_cartao bigint,
     numero_seguranca_cartao int(3),
     data_validade_cartao date,
     constraint id_PK primary key(id)
@@ -69,30 +69,70 @@ create table compra(
 create table telefone_organizador(
     id int auto_increment,
     id_organizador int,
-    telefone int(12),
-    constraint id_PK primary key(id)
+    telefone bigint,
+    constraint id_PK primary key(id),
+    constraint id_organizador_fk foreign key(id_organizador) references organizador(id)
 );
 
-alter table telefone_organizador add constraint id_organizador_fk foreign key(id_organizador) references organizador(id);
+-- Inserir dados na tabela 'organizador'
+INSERT INTO organizador (CNPJ, nome, email)
+VALUES
+    ('1234567890123', 'Empresa Organizadora 1', 'organizador1@email.com'),
+    ('9876543210987', 'Empresa Organizadora 2', 'organizador2@email.com'),
+    ('5555555555555', 'Empresa Organizadora 3', 'organizador3@email.com'),
+    ('7777777777777', 'Empresa Organizadora 4', 'organizador4@email.com'),
+    ('9999999999999', 'Empresa Organizadora 5', 'organizador5@email.com');
 
-insert into organizador(cnpj,nome,email) values ('202831/01','Arrocha eventos','arrochaeventos@gmail.com');
-insert into organizador(cnpj,nome,email) values ('982731/02','Brothers eventos','brotherseventos1223@gmail.com');
-insert into organizador(cnpj,nome,email) values ('934787/12','Oasis eventos','oasisevento12323@gmail.com');
-insert into organizador(cnpj,nome,email) values ('372362/28','Brabos eventos','braboseventos112@gmail.com');
-insert into organizador(cnpj,nome,email) values ('28827/32','Banana Brasil','bananabrasil1821@gmail.com');
+-- Inserir dados na tabela 'conta'
+INSERT INTO conta (nome, senha, saldo, data_nascimento, idade, nome_cartao, numero_cartao, numero_seguranca_cartao, data_validade_cartao)
+VALUES
+    ('Usuario 1', 'senha1', 100.0, '1990-05-15', 33, 'Titular Cartão 1', 1234567890123456, 123, '2025-12-01'),
+    ('Usuario 2', 'senha2', 50.0, '1985-10-20', 38, 'Titular Cartão 2', 9876543210987654, 456, '2024-08-01'),
+    ('Usuario 3', 'senha3', 200.0, '1995-03-02', 28, 'Titular Cartão 3', 5555555555555555, 789, '2023-06-01'),
+    ('Usuario 4', 'senha4', 75.0, '1980-12-10', 42, 'Titular Cartão 4', 7777777777777777, 234, '2026-10-01'),
+    ('Usuario 5', 'senha5', 300.0, '1992-08-30', 31, 'Titular Cartão 5', 9999999999999999, 567, '2024-11-01');
+    
+-- Inserir dados na tabela 'evento'
+INSERT INTO evento (nome, descricao, data, capacidade_maxima, id_organizador)
+VALUES
+    ('Evento 1', 'Descrição do Evento 1', '2023-10-25', 500, 1),
+    ('Evento 2', 'Descrição do Evento 2', '2023-11-15', 300, 2),
+    ('Evento 3', 'Descrição do Evento 3', '2024-01-05', 800, 1),
+    ('Evento 4', 'Descrição do Evento 4', '2024-03-20', 400, 3),
+    ('Evento 5', 'Descrição do Evento 5', '2024-05-10', 600, 2);
+    
+-- Inserir dados na tabela 'sala'
+INSERT INTO sala (id_evento, numero, andar, capacidade_maxima)
+VALUES
+    (1, 101, 1, 100),
+    (1, 102, 1, 150),
+    (2, 201, 2, 80),
+    (3, 301, 3, 200),
+    (4, 401, 4, 120);
 
-insert into evento values ('Game Awards', 'Premiação dos melhores jogos do ano', '2023-07-12', 229000, 1);
-insert into evento values ('Gamescon', 'Apresentação dos mais novos jogos do mercado', '2022-08-26', 456000, 1);
-insert into evento values ('BGS', 'Encontro entre celebridades da internet e seus fãns', '2025-09-01', 867000, 2);
-insert into evento values ('Casamento Fernanda', 'Nos reunimos para celebrar a união de Paulo e Fernanda, na Igreja de São Paulo', '2023-03-23', 125, 3);
-insert into evento values ('Show do Iron Maiden', 'Venha conhecer a banda!', '2023-12-01', 98723492, 4);
-insert into evento values ('Festa Junina', 'Comida e bebida à vontade!', '2023-06-24', 1000, 5);
+-- Inserir dados na tabela 'tipo_ingresso'
+INSERT INTO tipo_ingresso (tipo, preco, id_evento)
+VALUES
+    ('VIP', 100.0, 1),
+    ('Padrão', 50.0, 1),
+    ('Premium', 120.0, 2),
+    ('Acessibilidade', 30.0, 3),
+    ('Estudante', 40.0, 4);
 
-insert into sala values (1, 230, 2, 100);
-insert into sala values (1, 140, 1, 200);
-insert into sala values (2, 150, 1, 150);
-insert into sala values (3, 220, 2, 100);
-insert into sala values (4, 180, 1, 100);
-insert into sala values (5, 270, 2, 160);
-insert into sala values (4, 190, 1, 100);
-insert into sala values (5, 210, 2, 200);
+-- Inserir dados na tabela 'compra'
+INSERT INTO compra (data, valor_total, id_conta, id_tipo_ingresso, id_evento)
+VALUES
+    ('2023-10-18 08:00:00', 100.0, 1, 1, 1),
+    ('2023-10-18 09:30:00', 150.0, 2, 3, 2),
+    ('2023-10-18 10:45:00', 60.0, 3, 4, 3),
+    ('2023-10-18 11:15:00', 40.0, 4, 2, 4),
+    ('2023-10-18 12:30:00', 200.0, 5, 1, 5);
+
+-- Inserir dados na tabela 'telefone_organizador'
+INSERT INTO telefone_organizador (id_organizador, telefone)
+VALUES
+    (1, 123456789012),
+    (2, 987654321098),
+    (3, 555555555555),
+    (4, 777777777777),
+    (5, 999999999999);
