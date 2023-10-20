@@ -8,16 +8,20 @@ import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
+import bean.Compra;
 import bean.Conta;
 import bean.Evento;
+import dao.CompraDAO;
 import dao.ContaDAO;
 import dao.EventoDAO;
+import dao.TipoIngressoDAO;
 
 import javax.swing.JLabel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 
 import java.awt.Font;
+import java.util.Date;
 import java.util.List;
 
 import javax.swing.JTable;
@@ -25,15 +29,17 @@ import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
-public class HomeScreen extends JFrame {
+public class VerCompras extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JTable eventoTable;
     private DefaultTableModel modeloTabela;
     
-    private static EventoDAO eventog = new EventoDAO();
     private static ContaDAO contag = new ContaDAO();
+    private CompraDAO comprag = new CompraDAO();
+    private EventoDAO eventog = new EventoDAO();
+    private TipoIngressoDAO ingressog = new TipoIngressoDAO();
 
 	/**
 	 * Launch the application.
@@ -42,7 +48,7 @@ public class HomeScreen extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					HomeScreen frame = new HomeScreen(contag.getLista().get(1));
+					VerCompras frame = new VerCompras(contag.getLista().get(1));
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -54,8 +60,8 @@ public class HomeScreen extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public HomeScreen(Conta CONTA_LOGADA) {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	public VerCompras(Conta CONTA_LOGADA) {
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 730, 526);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -89,59 +95,23 @@ public class HomeScreen extends JFrame {
 		btnDepositar.setBounds(323, 7, 117, 25);
 		contentPane.add(btnDepositar);
 		
-		JButton btnVerCompras = new JButton("Ver Compras");
-		btnVerCompras.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				try {
-					VerCompras frame = new VerCompras(CONTA_LOGADA);
-					frame.setVisible(true);
-				} catch (Exception ef) {
-					ef.printStackTrace();
-				}
-			}
-		});
-		btnVerCompras.setBounds(576, 7, 132, 25);
-		contentPane.add(btnVerCompras);
-		
-		JLabel lblEventos = new JLabel("Eventos");
+		JLabel lblEventos = new JLabel("Suas Compras");
 		lblEventos.setFont(new Font("Dialog", Font.BOLD, 25));
-		lblEventos.setBounds(309, 63, 117, 37);
+		lblEventos.setBounds(271, 63, 200, 37);
 		contentPane.add(lblEventos);
 		
-        String[] nomesColunas = {"Nome", "Descrição", "Data", "Capacidade Máxima", "Organizador"};
+		// int id, Date data, double valorTotal, int idConta, int idTipoIngresso, int idEvento
+        String[] nomesColunas = {"Data", "Valor", "Tipo do Ingresso", "Evento"};
         modeloTabela = new DefaultTableModel(nomesColunas, 0);
-	
-        List<Evento> eventos = eventog.getLista();
         
-        JComboBox<Object> eventoComboBox = new JComboBox<>(); // Create a JComboBox for Evento selection
-        eventoComboBox.setBounds(297, 454, 200, 30);
-        contentPane.add(eventoComboBox);
+        List<Compra> compras = comprag.getListaConta(CONTA_LOGADA.getId());
 
         // Preencher a tabela com dados de eventos e botões de ação
-        for (Evento evento : eventos) {
-            Object[] rowData = {evento.getNome(), evento.getDescricao(), evento.getData(),
-                    evento.getCapacidadeMaxima(), evento.getIdOrganizador()};
+        for (Compra compra : compras) {
+            Object[] rowData = {compra.getData(), compra.getValorTotal(), ingressog.getIngressoId(compra.getIdTipoIngresso()).getTipo(),
+            		eventog.getEventoId(compra.getIdEvento()).getNome()};
             modeloTabela.addRow(rowData);
-            eventoComboBox.addItem(evento.getNome());
         }
-
-        JButton btnComprarIngresso = new JButton("Comprar Ingresso"); // JButton to get the selected Evento
-        btnComprarIngresso.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                String selectedEvento = (String) eventoComboBox.getSelectedItem();
-                if (selectedEvento != null) {
-                	
-    				try {
-    					ComprarIngresso frame = new ComprarIngresso(eventog.getEvento(selectedEvento), CONTA_LOGADA);
-    					frame.setVisible(true);
-    				} catch (Exception ef) {
-    					ef.printStackTrace();
-    				}
-                }
-            }
-        });
-        btnComprarIngresso.setBounds(509, 454, 183, 30);
-        contentPane.add(btnComprarIngresso);
         
         JScrollPane scrollPane_1 = new JScrollPane();
         scrollPane_1.setBounds(12, 112, 708, 330);

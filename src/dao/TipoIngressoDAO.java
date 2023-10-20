@@ -64,6 +64,34 @@ public class TipoIngressoDAO {
         return Ingresso;
     }
     
+    public TipoIngresso getIngressoId(int id) {
+        String sql = "SELECT * FROM tipo_ingresso WHERE id=?;";
+        PreparedStatement stmt;
+        TipoIngresso Ingresso = null;
+
+        try {
+            stmt = connection.prepareStatement(sql);
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                Ingresso = new TipoIngresso(
+                    rs.getInt("id"),
+                    rs.getString("tipo"),
+                    rs.getDouble("preco"),
+                    rs.getInt("id_evento")
+                );
+            }
+
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return Ingresso;
+    }
+    
     public ArrayList<TipoIngresso> getIngressosEvento(Evento ev) {
         String sql = "SELECT * FROM tipo_ingresso WHERE id_evento=?;";
         PreparedStatement stmt;

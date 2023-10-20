@@ -69,6 +69,39 @@ public class CompraDAO {
 
         return null;
     }
+    
+    public ArrayList<Compra> getListaConta(int id) {
+        String sql = "SELECT * FROM compra WHERE id_conta=?;";
+        PreparedStatement stmt;
+        Compra compra;
+
+        try {
+            stmt = connection.prepareStatement(sql);
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+            ArrayList<Compra> compras = new ArrayList<>();
+
+            while (rs.next()) {
+                compra = new Compra(
+                        rs.getInt("id"),
+                        new Date(rs.getTimestamp("data").getTime()),
+                        rs.getDouble("valor_total"),
+                        rs.getInt("id_conta"),
+                        rs.getInt("id_tipo_ingresso"),
+                        rs.getInt("id_evento")
+                );
+                compras.add(compra);
+            }
+
+            rs.close();
+            stmt.close();
+            return compras;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 
     public int remover(Compra compra) {
         int removeu = 0;

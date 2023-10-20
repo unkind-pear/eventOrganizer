@@ -66,6 +66,37 @@ public class EventoDAO {
 
         return null;
     }
+    
+    public Evento getEventoId(int n) {
+        String sql = "SELECT * FROM evento WHERE id=?;";
+        PreparedStatement stmt;
+        Evento evento = null;
+
+        try {
+            stmt = connection.prepareStatement(sql);
+            stmt.setInt(1, n);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                evento = new Evento(
+                        rs.getInt("id"),
+                        rs.getString("nome"),
+                        rs.getString("descricao"),
+                        rs.getDate("data"),
+                        rs.getInt("capacidade_maxima"),
+                        rs.getInt("id_organizador")
+                );
+            }
+
+            rs.close();
+            stmt.close();
+            return evento;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 
     public ArrayList<Evento> getLista() {
         String sql = "SELECT * FROM evento;";
