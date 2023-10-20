@@ -1,5 +1,6 @@
 package dao;
 
+import bean.Evento;
 import bean.Sala;
 
 import java.sql.Connection;
@@ -33,6 +34,38 @@ public class SalaDAO {
         }
 
         return inseriu;
+    }
+    
+    public ArrayList<Sala> getSalasEvento(Evento ev) {
+        String sql = "SELECT * FROM sala WHERE id_evento=?;";
+        PreparedStatement stmt;
+        Sala sala;
+
+        try {
+            stmt = connection.prepareStatement(sql);
+            stmt.setInt(1, ev.getId());
+            ResultSet rs = stmt.executeQuery();
+            ArrayList<Sala> salas = new ArrayList<>();
+
+            while (rs.next()) {
+                sala = new Sala(
+                        rs.getInt("id"),
+                        rs.getInt("id_evento"),
+                        rs.getInt("numero"),
+                        rs.getInt("andar"),
+                        rs.getInt("capacidade_maxima")
+                );
+                salas.add(sala);
+            }
+
+            rs.close();
+            stmt.close();
+            return salas;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     public ArrayList<Sala> getLista() {

@@ -8,27 +8,30 @@ import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
+import bean.Compra;
 import bean.Conta;
 import bean.Evento;
 import bean.Sala;
 import bean.TipoIngresso;
+import dao.CompraDAO;
+import dao.ContaDAO;
 import dao.EventoDAO;
 import dao.SalaDAO;
 import dao.TipoIngressoDAO;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 
 import java.awt.Font;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JTable;
 import java.awt.Color;
 import java.awt.event.ActionListener;
+import java.util.Date;
 import java.awt.event.ActionEvent;
-import javax.swing.table.TableModel;
 
 public class ComprarIngresso extends JFrame {
 
@@ -39,8 +42,12 @@ public class ComprarIngresso extends JFrame {
     
     private TipoIngressoDAO eventog = new TipoIngressoDAO();
     private SalaDAO salag = new SalaDAO();
+    private CompraDAO comprag = new CompraDAO();
     private JTable salasTable;
-
+    
+    private static EventoDAO evg = new EventoDAO();
+    private static ContaDAO cg = new ContaDAO();
+    
 	/**
 	 * Launch the application.
 	 */
@@ -48,7 +55,7 @@ public class ComprarIngresso extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					ComprarIngresso frame = new ComprarIngresso();
+					ComprarIngresso frame = new ComprarIngresso(evg.getLista().get(1), cg.getLista().get(1));
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -60,8 +67,8 @@ public class ComprarIngresso extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public ComprarIngresso() {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	public ComprarIngresso(Evento EVENTO_SELECIONADO, Conta CONTA_LOGADA) {
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 730, 526);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -69,7 +76,7 @@ public class ComprarIngresso extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JLabel lbUsuario = new JLabel("[user]");
+		JLabel lbUsuario = new JLabel(CONTA_LOGADA.getNome());
 		lbUsuario.setBounds(12, 12, 132, 15);
 		contentPane.add(lbUsuario);
 		
@@ -77,13 +84,19 @@ public class ComprarIngresso extends JFrame {
 		lblSaldoTexto.setBounds(156, 12, 51, 15);
 		contentPane.add(lblSaldoTexto);
 		
-		JLabel lblSaldoQtd = new JLabel("[saldo]");
+		JLabel lblSaldoQtd = new JLabel(Double.toString(CONTA_LOGADA.getSaldo()));
 		lblSaldoQtd.setBounds(206, 12, 99, 15);
 		contentPane.add(lblSaldoQtd);
 		
 		JButton btnDepositar = new JButton("Depositar");
 		btnDepositar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				try {
+					Depositar frame = new Depositar(CONTA_LOGADA);
+					frame.setVisible(true);
+				} catch (Exception ef) {
+					ef.printStackTrace();
+				}
 			}
 		});
 		btnDepositar.setBounds(323, 7, 117, 25);
@@ -97,11 +110,9 @@ public class ComprarIngresso extends JFrame {
         String[] nomesColunas = {"Tipo", "Preço"};
         modeloTabela = new DefaultTableModel(nomesColunas, 0);
 	
-        JScrollPane scrollPane = new JScrollPane(eventosTable);
-
-        List<TipoIngresso> eventos = eventog.getLista();
+        List<TipoIngresso> eventos = eventog.getIngressosEvento(EVENTO_SELECIONADO);
         
-        JComboBox eventoComboBox = new JComboBox<>(); // Create a JComboBox for Evento selection
+        JComboBox<Object> eventoComboBox = new JComboBox<>(); // Create a JComboBox for Evento selection
         eventoComboBox.setBounds(297, 454, 200, 30);
         contentPane.add(eventoComboBox);
 
@@ -117,8 +128,16 @@ public class ComprarIngresso extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 String selectedEvento = (String) eventoComboBox.getSelectedItem();
                 if (selectedEvento != null) {
-                    // Handle the selected Evento here
-                    System.out.println("Selected Ingresso: " + selectedEvento);
+                    double novoSaldo = CONTA_LOGADA.getSaldo() - eventog.getIngresso(selectedEvento, EVENTO_SELECIONADO.getId()).getPreco();
+                    if (novoSaldo >= 0) {
+                    	Date data = new Date();
+                    	Compra compra = new Compra(0, data, eventog.getIngresso(selectedEvento, EVENTO_SELECIONADO.getId()).getPreco(), CONTA_LOGADA.getId(), eventog.getIngresso(selectedEvento, EVENTO_SELECIONADO.getId()).getId(), EVENTO_SELECIONADO.getId());
+                        comprag.inserir(compra);
+                    	CONTA_LOGADA.setSaldo(novoSaldo);
+                    	cg.alterar(CONTA_LOGADA);
+                    } else {
+                    	JOptionPane.showMessageDialog(null, "Você não possi dinheiro suficiente", "Aviso", JOptionPane.WARNING_MESSAGE);
+                    }
                 }
             }
         });
@@ -136,7 +155,7 @@ public class ComprarIngresso extends JFrame {
         String[] nomesColunas2 = {"Número", "Andar", "Capacidade Máxima"};
         DefaultTableModel modeloTabela2 = new DefaultTableModel(nomesColunas2, 0);
 
-        List<Sala> salas = salag.getLista();
+        List<Sala> salas = salag.getSalasEvento(EVENTO_SELECIONADO);
 
         for (Sala evento : salas) {
             Object[] rowData = {evento.getNumero(), evento.getAndar(), evento.getCapacidadeMaxima()};

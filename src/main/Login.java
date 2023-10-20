@@ -87,14 +87,13 @@ public class Login extends JFrame {
 				if (CONTA_LOGADA == null) {
 		            JOptionPane.showMessageDialog(null, "Conta não encontrada. Verifique o nome de usuário e senha.", "Aviso", JOptionPane.WARNING_MESSAGE);
 		        } else {
-		            JFrame novaJanela = new JFrame("Janela da Conta");
-		            novaJanela.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		            
-		            JLabel label = new JLabel("Bem-vindo, " + CONTA_LOGADA.getNome());
-		            novaJanela.add(label);
-		            
-		            novaJanela.pack();
-		            novaJanela.setVisible(true);
+					try {
+						HomeScreen frame = new HomeScreen(CONTA_LOGADA);
+						frame.setVisible(true);
+						dispose();
+					} catch (Exception ef) {
+						ef.printStackTrace();
+					}
 		        }
 			}
 		});
@@ -102,6 +101,16 @@ public class Login extends JFrame {
 		contentPane.add(btnLogin);
 		
 		JButton btnCriarConta = new JButton("Não tem uma conta? Criar conta");
+		btnCriarConta.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					criarConta frame = new criarConta();
+					frame.setVisible(true);
+				} catch (Exception ef) {
+					ef.printStackTrace();
+				}
+			}
+		});
 		btnCriarConta.setBounds(101, 233, 260, 25);
 		contentPane.add(btnCriarConta);
 	}

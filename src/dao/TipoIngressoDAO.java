@@ -1,5 +1,6 @@
 package dao;
 
+import bean.Evento;
 import bean.TipoIngresso;
 
 import java.sql.Connection;
@@ -32,6 +33,66 @@ public class TipoIngressoDAO {
         }
 
         return inseriu;
+    }
+    
+    public TipoIngresso getIngresso(String tipo, int idEvento) {
+        String sql = "SELECT * FROM tipo_ingresso WHERE tipo=? AND id_evento=?;";
+        PreparedStatement stmt;
+        TipoIngresso Ingresso = null;
+
+        try {
+            stmt = connection.prepareStatement(sql);
+            stmt.setString(1, tipo);
+            stmt.setInt(2, idEvento);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                Ingresso = new TipoIngresso(
+                    rs.getInt("id"),
+                    rs.getString("tipo"),
+                    rs.getDouble("preco"),
+                    rs.getInt("id_evento")
+                );
+            }
+
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return Ingresso;
+    }
+    
+    public ArrayList<TipoIngresso> getIngressosEvento(Evento ev) {
+        String sql = "SELECT * FROM tipo_ingresso WHERE id_evento=?;";
+        PreparedStatement stmt;
+        TipoIngresso tipoIngresso;
+
+        try {
+            stmt = connection.prepareStatement(sql);
+            stmt.setInt(1, ev.getId());
+            ResultSet rs = stmt.executeQuery();
+            ArrayList<TipoIngresso> tiposIngresso = new ArrayList<>();
+
+            while (rs.next()) {
+                tipoIngresso = new TipoIngresso(
+                        rs.getInt("id"),
+                        rs.getString("tipo"),
+                        rs.getDouble("preco"),
+                        rs.getInt("id_evento")
+                );
+                tiposIngresso.add(tipoIngresso);
+            }
+
+            rs.close();
+            stmt.close();
+            return tiposIngresso;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     public ArrayList<TipoIngresso> getLista() {

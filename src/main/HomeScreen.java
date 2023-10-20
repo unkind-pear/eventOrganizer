@@ -10,6 +10,7 @@ import javax.swing.table.DefaultTableModel;
 
 import bean.Conta;
 import bean.Evento;
+import dao.ContaDAO;
 import dao.EventoDAO;
 
 import javax.swing.JLabel;
@@ -17,7 +18,6 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 
 import java.awt.Font;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JTable;
@@ -32,7 +32,8 @@ public class HomeScreen extends JFrame {
 	private JTable eventoTable;
     private DefaultTableModel modeloTabela;
     
-    private EventoDAO eventog = new EventoDAO();
+    private static EventoDAO eventog = new EventoDAO();
+    private static ContaDAO contag = new ContaDAO();
 
 	/**
 	 * Launch the application.
@@ -41,7 +42,7 @@ public class HomeScreen extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					HomeScreen frame = new HomeScreen();
+					HomeScreen frame = new HomeScreen(contag.getLista().get(1));
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -53,7 +54,7 @@ public class HomeScreen extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public HomeScreen() {
+	public HomeScreen(Conta CONTA_LOGADA) {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 730, 526);
 		contentPane = new JPanel();
@@ -62,7 +63,7 @@ public class HomeScreen extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JLabel lbUsuario = new JLabel("[user]");
+		JLabel lbUsuario = new JLabel(CONTA_LOGADA.getNome());
 		lbUsuario.setBounds(12, 12, 132, 15);
 		contentPane.add(lbUsuario);
 		
@@ -70,13 +71,19 @@ public class HomeScreen extends JFrame {
 		lblSaldoTexto.setBounds(156, 12, 51, 15);
 		contentPane.add(lblSaldoTexto);
 		
-		JLabel lblSaldoQtd = new JLabel("[saldo]");
+		JLabel lblSaldoQtd = new JLabel(Double.toString(CONTA_LOGADA.getSaldo()));
 		lblSaldoQtd.setBounds(206, 12, 99, 15);
 		contentPane.add(lblSaldoQtd);
 		
 		JButton btnDepositar = new JButton("Depositar");
 		btnDepositar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				try {
+					Depositar frame = new Depositar(CONTA_LOGADA);
+					frame.setVisible(true);
+				} catch (Exception ef) {
+					ef.printStackTrace();
+				}
 			}
 		});
 		btnDepositar.setBounds(323, 7, 117, 25);
@@ -90,11 +97,9 @@ public class HomeScreen extends JFrame {
         String[] nomesColunas = {"Nome", "Descrição", "Data", "Capacidade Máxima", "Organizador"};
         modeloTabela = new DefaultTableModel(nomesColunas, 0);
 	
-        JScrollPane scrollPane = new JScrollPane(eventoTable);
-
         List<Evento> eventos = eventog.getLista();
         
-        JComboBox eventoComboBox = new JComboBox<>(); // Create a JComboBox for Evento selection
+        JComboBox<Object> eventoComboBox = new JComboBox<>(); // Create a JComboBox for Evento selection
         eventoComboBox.setBounds(297, 454, 200, 30);
         contentPane.add(eventoComboBox);
 
@@ -111,8 +116,13 @@ public class HomeScreen extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 String selectedEvento = (String) eventoComboBox.getSelectedItem();
                 if (selectedEvento != null) {
-                    // Handle the selected Evento here
-                    System.out.println("Selected Evento: " + selectedEvento);
+                	
+    				try {
+    					ComprarIngresso frame = new ComprarIngresso(eventog.getEvento(selectedEvento), CONTA_LOGADA);
+    					frame.setVisible(true);
+    				} catch (Exception ef) {
+    					ef.printStackTrace();
+    				}
                 }
             }
         });

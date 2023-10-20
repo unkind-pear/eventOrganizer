@@ -37,6 +37,37 @@ public class ContaDAO {
         }
         return inseriu;
     }
+    
+    public Conta getConta(Conta c) {
+        String sql = "SELECT * FROM conta WHERE id=?;";
+        PreparedStatement stmt;
+        Conta conta = null;
+        try {
+            stmt = connection.prepareStatement(sql);
+            stmt.setInt(1, c.getId());
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                conta = new Conta(
+                    rs.getInt("id"),
+                    rs.getString("nome"),
+                    rs.getString("senha"),
+                    rs.getDouble("saldo"),
+                    rs.getDate("data_nascimento"),
+                    rs.getInt("idade"),
+                    rs.getString("nome_cartao"),
+                    rs.getLong("numero_cartao"),
+                    rs.getInt("numero_seguranca_cartao"),
+                    rs.getDate("data_validade_cartao")
+                );
+            }
+            rs.close();
+            stmt.close();
+            return conta;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     public ArrayList<Conta> getLista() {
         String sql = "SELECT * FROM conta;";
