@@ -47,7 +47,7 @@ public class Login extends JFrame {
 	 */
 	public Login() {		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 450, 387);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
@@ -63,20 +63,20 @@ public class Login extends JFrame {
 		contentPane.add(lblNewLabel_1);
 		
 		JLabel lblNome = new JLabel("Nome:");
-		lblNome.setBounds(142, 113, 45, 15);
+		lblNome.setBounds(129, 113, 45, 15);
 		contentPane.add(lblNome);
 		
 		textField_Nome = new JTextField();
-		textField_Nome.setBounds(197, 111, 114, 19);
+		textField_Nome.setBounds(184, 111, 114, 19);
 		contentPane.add(textField_Nome);
 		textField_Nome.setColumns(10);
 		
 		JLabel lblSenha = new JLabel("Senha:");
-		lblSenha.setBounds(142, 140, 50, 15);
+		lblSenha.setBounds(129, 140, 50, 15);
 		contentPane.add(lblSenha);
 		
 		textField_Senha = new JTextField();
-		textField_Senha.setBounds(197, 138, 114, 19);
+		textField_Senha.setBounds(184, 138, 114, 19);
 		contentPane.add(textField_Senha);
 		textField_Senha.setColumns(10);
 		
@@ -97,7 +97,7 @@ public class Login extends JFrame {
 		        }
 			}
 		});
-		btnLogin.setBounds(197, 169, 73, 25);
+		btnLogin.setBounds(184, 169, 73, 25);
 		contentPane.add(btnLogin);
 		
 		JButton btnCriarConta = new JButton("Não tem uma conta? Criar conta");
@@ -111,8 +111,16 @@ public class Login extends JFrame {
 				}
 			}
 		});
-		btnCriarConta.setBounds(101, 233, 260, 25);
+		btnCriarConta.setBounds(91, 234, 260, 25);
 		contentPane.add(btnCriarConta);
+		
+		JButton btnAdminMode = new JButton("Admin Mode");
+		btnAdminMode.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		});
+		btnAdminMode.setBounds(149, 320, 149, 25);
+		contentPane.add(btnAdminMode);
 	}
-
 }
