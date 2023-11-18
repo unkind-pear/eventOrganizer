@@ -54,7 +54,7 @@ public class Login extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JLabel lblNewLabel = new JLabel("Bem Vindo ao EventEasy!");
+		JLabel lblNewLabel = new JLabel("Bem Vindo ao EventWave!");
 		lblNewLabel.setBounds(142, 10, 156, 15);
 		contentPane.add(lblNewLabel);
 		

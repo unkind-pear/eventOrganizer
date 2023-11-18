@@ -52,6 +52,30 @@ public class AdminHomeScreen extends JFrame {
 	private TipoIngressoDAO tipoIngressog = new TipoIngressoDAO();
 	private CompraDAO comprag = new CompraDAO();
 	private TelefoneOrganizadorDAO telefoneOrganizadorg = new TelefoneOrganizadorDAO();
+	
+	// AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+
+    private void editOrganizador() {
+		int tr = tableOrganizadores.getSelectedRow();
+		Organizador organizador = new Organizador((int) tableOrganizadores.getValueAt(tr, 0), (String) tableOrganizadores.getValueAt(tr, 1), (String) tableOrganizadores.getValueAt(tr, 2), (String) tableOrganizadores.getValueAt(tr, 3));
+		if (organizadorg.alterar(organizador) != 0) {
+			JOptionPane.showMessageDialog(null, "Editado com sucesso", "Sucesso", JOptionPane.PLAIN_MESSAGE);
+		} else {
+			JOptionPane.showMessageDialog(null, "Houve um erro ao editar o Banco de Dados. Verifique se os dados estão corretos: "+organizador, "Erro", JOptionPane.ERROR_MESSAGE);
+		}
+    }
+
+    private boolean removeOrganizador() {
+		int tr = tableTelefonesOrganizador.getSelectedRow();
+		Organizador organizador = new Organizador((int) tableTelefonesOrganizador.getValueAt(tr, 0), (String) tableTelefonesOrganizador.getValueAt(tr, 1), (String) tableOrganizadores.getValueAt(tr, 2), (String) tableOrganizadores.getValueAt(tr, 3));
+		if (organizadorg.remover(organizador) != 0) {
+			JOptionPane.showMessageDialog(null, "Removido com sucesso", "Sucesso", JOptionPane.PLAIN_MESSAGE);
+			return true;
+		} else {
+			JOptionPane.showMessageDialog(null, "Houve um erro ao editar o Banco de Dados. Verifique se os dados estão corretos: "+organizador, "Erro", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+    }
 
 	/**
 	 * Launch the application.
@@ -109,19 +133,10 @@ public class AdminHomeScreen extends JFrame {
 		JButton btnEditar = new JButton("Editar");
 		btnEditar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				int tr = tableOrganizadores.getSelectedRow();
-				Organizador organizador = new Organizador(Integer.parseInt((String) tableOrganizadores.getValueAt(tr, 0)), (String) tableOrganizadores.getValueAt(tr, 1), (String) tableOrganizadores.getValueAt(tr, 2), (String) tableOrganizadores.getValueAt(tr, 3));
-				if (organizadorg.alterar(organizador) != 0) {
-					JOptionPane.showMessageDialog(null, "Editado com sucesso", "Sucesso", JOptionPane.PLAIN_MESSAGE);
-				} else {
-					JOptionPane.showMessageDialog(null, "Houve um erro ao editar o Banco de Dados. Verifique se os dados estão corretos: "+organizador, "Erro", JOptionPane.ERROR_MESSAGE);
-				}
-
-				//modeloTabela.removeRow(tableOrganizadores.getSelectedRow()); // Deletar
-				
+				editOrganizador();
 			}
 		});
-		btnEditar.setBounds(240, 262, 117, 25);
+		btnEditar.setBounds(178, 262, 76, 25);
 		contentPane.add(btnEditar);
 		
 		JLabel lblOrganizadores = new JLabel("Organizadores");
@@ -152,10 +167,6 @@ public class AdminHomeScreen extends JFrame {
 		lblTelefonesOrganizador.setBounds(476, 12, 182, 15);
 		contentPane.add(lblTelefonesOrganizador);
 		
-		JButton btnNewButton_1 = new JButton("New button");
-		btnNewButton_1.setBounds(562, 262, 117, 25);
-		contentPane.add(btnNewButton_1);
-		
 		JScrollPane scrollPane_1 = new JScrollPane();
 		scrollPane_1.setBounds(450, 39, 229, 211);
 		contentPane.add(scrollPane_1);
@@ -179,10 +190,6 @@ public class AdminHomeScreen extends JFrame {
 		
 		tableTelefonesOrganizador = new JTable(modeloTabela2);
 		scrollPane_1.setViewportView(tableTelefonesOrganizador);
-		
-		JButton btnNewButton_2 = new JButton("New button");
-		btnNewButton_2.setBounds(1090, 262, 117, 25);
-		contentPane.add(btnNewButton_2);
 		
 		JScrollPane scrollPane_2 = new JScrollPane();
 		scrollPane_2.setBounds(760, 39, 447, 211);
@@ -209,10 +216,6 @@ public class AdminHomeScreen extends JFrame {
 		tableCompras = new JTable(modeloTabela3);
 		scrollPane_2.setViewportView(tableCompras);
 		
-		JButton btnNewButton_3 = new JButton("New button");
-		btnNewButton_3.setBounds(304, 561, 117, 25);
-		contentPane.add(btnNewButton_3);
-		
 		JScrollPane scrollPane_3 = new JScrollPane();
 		scrollPane_3.setBounds(12, 338, 409, 211);
 		contentPane.add(scrollPane_3);
@@ -237,10 +240,6 @@ public class AdminHomeScreen extends JFrame {
 		tableEventos = new JTable(modeloTabelaEvento);
 		scrollPane_3.setViewportView(tableEventos);
 		
-		JButton btnNewButton_4 = new JButton("New button");
-		btnNewButton_4.setBounds(723, 561, 117, 25);
-		contentPane.add(btnNewButton_4);
-		
 		JScrollPane scrollPane_4 = new JScrollPane();
 		scrollPane_4.setBounds(503, 338, 337, 211);
 		contentPane.add(scrollPane_4);
@@ -263,10 +262,6 @@ public class AdminHomeScreen extends JFrame {
 
 		tableSalas = new JTable(modeloTabelaSala);
 		scrollPane_4.setViewportView(tableSalas);
-		
-		JButton btnNewButton_5 = new JButton("New button");
-		btnNewButton_5.setBounds(1090, 561, 117, 25);
-		contentPane.add(btnNewButton_5);
 		
 		JScrollPane scrollPane_5 = new JScrollPane();
 		scrollPane_5.setBounds(922, 338, 285, 211);
@@ -291,10 +286,6 @@ public class AdminHomeScreen extends JFrame {
 		tableTipoIngresso = new JTable(modeloTabelaTipoIngresso);
 		scrollPane_5.setViewportView(tableTipoIngresso);
 		
-		JButton btnNewButton_6 = new JButton("New button");
-		btnNewButton_6.setBounds(765, 852, 117, 25);
-		contentPane.add(btnNewButton_6);
-		
 		JScrollPane scrollPane_6 = new JScrollPane();
 		scrollPane_6.setBounds(374, 629, 508, 211);
 		contentPane.add(scrollPane_6);
@@ -318,5 +309,16 @@ public class AdminHomeScreen extends JFrame {
 
 		tableContas = new JTable(modeloTabelaConta);
 		scrollPane_6.setViewportView(tableContas);
+		
+		JButton btnRemover = new JButton("Remover");
+		btnRemover.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (removeOrganizador()) {
+					modeloTabela.removeRow(tableOrganizadores.getSelectedRow());
+				}
+			}
+		});
+		btnRemover.setBounds(261, 262, 96, 25);
+		contentPane.add(btnRemover);
 	}
 }
