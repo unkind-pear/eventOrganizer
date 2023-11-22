@@ -8,7 +8,7 @@ public class FabricaConexoes {
 	public Connection getConnection() {
 		try {
 			return (Connection)
-			DriverManager.getConnection("jdbc:mysql://localhost:3306/eventos_db?useSSL=false", "root", "sansjBKJ%¨%&78");
+			DriverManager.getConnection("jdbc:mysql://localhost:3306/eventos_db?useSSL=false", "root", "andrew01");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
